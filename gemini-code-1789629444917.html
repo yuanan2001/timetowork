@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>哞！上工日誌 - 牛犁協會</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome 圖標庫 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+</head>
+<body class="bg-amber-50/30 text-gray-800 pb-24 font-sans min-h-screen">
+
+  <!-- 頂部 Header (包含身份切換) -->
+  <header class="bg-amber-600 text-white p-3.5 shadow-md sticky top-0 z-40 flex justify-between items-center">
+    <div class="flex items-center space-x-2">
+      <i class="fa-solid fa-cow text-2xl"></i>
+      <div>
+        <h1 class="font-bold text-base leading-tight">哞！上工日誌</h1>
+        <p class="text-[10px] text-amber-200" id="header-subtitle">員工端模式 | 壽豐辦公室</p>
+      </div>
+    </div>
+    
+    <!-- 後台開關切換器 -->
+    <div class="flex items-center gap-2">
+      <button onclick="toggleAdminMode()" id="admin-toggle-btn" class="text-[10px] font-bold bg-amber-800/80 hover:bg-amber-900 text-amber-100 px-2.5 py-1 rounded-lg border border-amber-500/50 flex items-center gap-1 transition">
+        <i class="fa-solid fa-user-gear"></i> 切換人事後台
+      </button>
+    </div>
+  </header>
+
+  <!-- ================= 員工端內容區塊 (Staff View) ================= -->
+  <div id="view-staff">
+    <main class="max-w-md mx-auto p-4 space-y-5">
+
+      <!-- 頂部個人出勤卡片 -->
+      <div class="flex justify-between items-center bg-white p-3 rounded-2xl shadow-sm border border-amber-100">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 bg-amber-200 text-amber-800 rounded-full flex items-center justify-center font-bold text-xs">阿</div>
+          <div>
+            <h2 class="font-bold text-xs text-gray-800">阿犁 (專案企劃)</h2>
+            <p class="text-[10px] text-gray-400">當期區間：08/20 - 09/19</p>
+          </div>
+        </div>
+        <button onclick="openModal('modal-late-detail')" class="text-[10px] font-bold bg-rose-100 text-rose-700 hover:bg-rose-200 px-2.5 py-1 rounded-full flex items-center gap-1 transition">
+          <i class="fa-solid fa-clock"></i> 本月遲到：15 分鐘
+        </button>
+      </div>
+
+      <!-- ================= 頁面 1: 首頁 (Home) ================= -->
+      <section id="page-home" class="page-content space-y-4">
+
+        <!-- 定位打卡卡片 -->
+        <div class="bg-white rounded-2xl p-4 shadow-sm border border-amber-100/80 space-y-3">
+          <div class="flex justify-between items-center border-b pb-2">
+            <span class="font-bold text-xs text-gray-700 flex items-center gap-1.5">
+              <i class="fa-solid fa-location-dot text-amber-600"></i> 定位打卡
+            </span>
+            <span class="text-[10px] text-emerald-600 font-medium bg-emerald-50 px-2 py-0.5 rounded-full">
+              距離辦公室 8m
+            </span>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2">
+            <button onclick="alert('【打卡成功】早上上班 08:28')" class="flex flex-col items-center justify-center p-2.5 bg-amber-50 text-amber-900 rounded-xl border border-amber-200">
+              <i class="fa-solid fa-sun text-amber-600 text-sm mb-0.5"></i>
+              <span class="text-xs font-bold">早上上班</span>
+              <span class="text-[9px] text-emerald-600 font-semibold">08:28 已打卡</span>
+            </button>
+            <button onclick="alert('打卡記錄成功')" class="flex flex-col items-center justify-center p-2.5 bg-gray-50 text-gray-700 rounded-xl border border-gray-200">
+              <i class="fa-solid fa-utensils text-amber-600 text-sm mb-0.5"></i>
+              <span class="text-xs font-bold">中午下班</span>
+              <span class="text-[9px] text-gray-400">未打卡</span>
+            </button>
+            <button onclick="alert('打卡記錄成功')" class="flex flex-col items-center justify-center p-2.5 bg-gray-50 text-gray-700 rounded-xl border border-gray-200">
+              <i class="fa-solid fa-briefcase text-amber-600 text-sm mb-0.5"></i>
+              <span class="text-xs font-bold">下午上班</span>
+              <span class="text-[9px] text-gray-400">未打卡</span>
+            </button>
+            <button onclick="openModal('modal-out-range')" class="flex flex-col items-center justify-center p-2.5 bg-amber-50/50 text-amber-900 rounded-xl border border-amber-200/80">
+              <i class="fa-solid fa-moon text-amber-600 text-sm mb-0.5"></i>
+              <span class="text-xs font-bold">下午下班</span>
+              <span class="text-[9px] text-amber-700">測試外勤打卡</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 特殊計薪週期 (20日~19日) 全月班表 -->
+        <div class="bg-white rounded-2xl p-4 shadow-sm border border-amber-100/80 space-y-3">
+          <div class="flex justify-between items-center border-b pb-2">
+            <div>
+              <h3 class="font-bold text-xs text-gray-700 flex items-center gap-1">
+                <i class="fa-regular fa-calendar-days text-amber-600"></i> 當期班表 (08/20 - 09/19)
+              </h3>
+            </div>
+            <!-- 切換檢視模式 -->
+            <button onclick="toggleCalendarView()" id="btn-toggle-cal-view" class="text-[10px] bg-amber-100 text-amber-800 px-2 py-0.5 rounded font-bold">
+              切換網格月曆
+            </button>
+          </div>
+
+          <!-- 模式 A: 滑動視圖 -->
+          <div id="cal-view-slide" class="flex space-x-2 overflow-x-auto no-scrollbar py-1">
+            <div onclick="openDayDetail('2026/08/20', '過去班表', '08:00-17:00', '辦公室')" class="flex-shrink-0 w-14 p-1.5 bg-gray-100 rounded-xl text-center text-gray-400 cursor-pointer">
+              <div class="text-[9px]">08/20</div>
+              <div class="font-bold text-xs my-0.5">四</div>
+              <div class="text-[8px]">已過</div>
+            </div>
+            <div onclick="openDayDetail('2026/09/16', '遲到', '08:15-17:00', '辦公室')" class="flex-shrink-0 w-14 p-1.5 bg-rose-50 rounded-xl border border-rose-200 text-center cursor-pointer">
+              <div class="text-[9px] text-rose-500">09/16</div>
+              <div class="font-bold text-xs text-rose-700 my-0.5">三</div>
+              <div class="text-[8px] text-rose-600 font-bold">遲到</div>
+            </div>
+            <div onclick="openDayDetail('2026/09/17', '今日出勤', '08:00-17:00', '辦公室')" class="flex-shrink-0 w-14 p-1.5 bg-amber-50 rounded-xl border-2 border-amber-500 text-center cursor-pointer">
+              <div class="text-[9px] text-amber-700 font-bold">09/17</div>
+              <div class="font-bold text-xs text-amber-900 my-0.5">四</div>
+              <div class="text-[8px] text-amber-700 font-bold">今日</div>
+            </div>
+            <div onclick="openDayDetail('2026/09/18', '社區活動班', '08:30-16:30', '豐山據點')" class="flex-shrink-0 w-14 p-1.5 bg-blue-50 rounded-xl border border-blue-200 text-center cursor-pointer">
+              <div class="text-[9px] text-blue-500">09/18</div>
+              <div class="font-bold text-xs text-blue-900 my-0.5">五</div>
+              <div class="text-[8px] text-blue-600 font-bold">活動</div>
+            </div>
+            <div onclick="openDayDetail('2026/09/19', '計薪期末日', '全天休息', '無')" class="flex-shrink-0 w-14 p-1.5 bg-orange-50 rounded-xl border border-orange-200 text-center cursor-pointer">
+              <div class="text-[9px] text-orange-500">09/19</div>
+              <div class="font-bold text-xs text-orange-900 my-0.5">六</div>
+              <div class="text-[8px] text-orange-600 font-bold">期末</div>
+            </div>
+          </div>
+
+          <!-- 模式 B: 網格全月檢視 (預設隱藏) -->
+          <div id="cal-view-grid" class="hidden grid grid-cols-7 gap-1 text-center text-[10px] pt-1">
+            <div class="font-bold text-gray-400">日</div><div class="font-bold text-gray-400">一</div><div class="font-bold text-gray-400">二</div><div class="font-bold text-gray-400">三</div><div class="font-bold text-gray-400">四</div><div class="font-bold text-gray-400">五</div><div class="font-bold text-gray-400">六</div>
+            <!-- 示意呈現當期網格日期 -->
+            <div class="p-1 bg-gray-100 text-gray-400 rounded">20</div>
+            <div class="p-1 bg-gray-100 text-gray-400 rounded">21</div>
+            <div class="p-1 bg-gray-100 text-gray-400 rounded">22</div>
+            <div class="p-1 bg-gray-100 text-gray-400 rounded">23</div>
+            <div class="p-1 bg-gray-100 text-gray-400 rounded">24</div>
+            <div class="p-1 bg-gray-100 text-gray-400 rounded">25</div>
+            <div class="p-1 bg-gray-100 text-gray-400 rounded">26</div>
+            <div class="p-1 bg-gray-100 text-gray-400 rounded">27</div>
+            <div class="p-1 bg-gray-100 text-gray-400 rounded">28</div>
+            <div class="p-1 bg-gray-100 text-gray-400 rounded">29</div>
+            <div class="p-1 bg-gray-100 text-gray-400 rounded">30</div>
+            <div class="p-1 bg-gray-100 text-gray-400 rounded">31</div>
+            <div class="p-1 bg-gray-50 rounded">1</div>
+            <div class="p-1 bg-gray-50 rounded">2</div>
+            <div class="p-1 bg-gray-50 rounded">3</div>
+            <div class="p-1 bg-gray-50 rounded">4</div>
+            <div class="p-1 bg-gray-50 rounded">5</div>
+            <div class="p-1 bg-gray-50 rounded">6</div>
+            <div class="p-1 bg-gray-50 rounded">7</div>
+            <div class="p-1 bg-gray-50 rounded">8</div>
+            <div class="p-1 bg-gray-50 rounded">9</div>
+            <div class="p-1 bg-gray-50 rounded">10</div>
+            <div class="p-1 bg-gray-50 rounded">11</div>
+            <div class="p-1 bg-gray-50 rounded">12</div>
+            <div class="p-1 bg-gray-50 rounded">13</div>
+            <div class="p-1 bg-gray-50 rounded">14</div>
+            <div class="p-1 bg-gray-50 rounded">15</div>
+            <div class="p-1 bg-rose-100 text-rose-700 font-bold rounded">16</div>
+            <div class="p-1 bg-amber-500 text-white font-bold rounded">17</div>
+            <div class="p-1 bg-blue-100 text-blue-800 font-bold rounded">18</div>
+            <div class="p-1 bg-orange-100 text-orange-800 font-bold rounded">19</div>
+          </div>
+        </div>
+
+        <!-- 快捷入口 -->
+        <div class="grid grid-cols-2 gap-2">
+          <button onclick="switchTab('leave-swap')" class="p-3 bg-white rounded-xl border border-gray-100 flex items-center space-x-2 text-left">
+            <i class="fa-solid fa-arrow-rotate-left text-orange-500 text-base"></i>
+            <div>
+              <div class="font-bold text-xs">調班/請假</div>
+              <div class="text-[9px] text-gray-400">彈性班表與請假單</div>
+            </div>
+          </button>
+          <button onclick="switchTab('work-plan')" class="p-3 bg-white rounded-xl border border-gray-100 flex items-center space-x-2 text-left">
+            <i class="fa-solid fa-calendar-plus text-emerald-500 text-base"></i>
+            <div>
+              <div class="font-bold text-xs">未來特殊活動</div>
+              <div class="text-[9px] text-gray-400">預排行程與團隊月曆</div>
+            </div>
+          </button>
+        </div>
+      </section>
+
+      <!-- ================= 頁面 2: 請假與調班 (Leave & Swap) ================= -->
+      <section id="page-leave-swap" class="page-content hidden space-y-4">
+        <div class="flex bg-gray-200/80 p-1 rounded-xl text-xs font-bold">
+          <button id="subtab-btn-leave" onclick="switchSubTab('leave')" class="flex-1 py-1.5 rounded-lg bg-white shadow text-amber-800">請假申請</button>
+          <button id="subtab-btn-swap" onclick="switchSubTab('swap')" class="flex-1 py-1.5 rounded-lg text-gray-600">調班申請</button>
+        </div>
+
+        <!-- 請假單 -->
+        <form id="subtab-content-leave" class="bg-white p-4 rounded-2xl shadow-sm border space-y-3">
+          <h3 class="font-bold text-xs text-gray-800 border-b pb-1.5">請假單填寫</h3>
+          <div>
+            <label class="block text-[11px] font-bold text-gray-600 mb-1">假別選擇</label>
+            <select id="leave-type-select" onchange="updateLeaveNotice()" class="w-full border rounded-lg p-2 text-xs">
+              <option value="annual">特別休假 (特休)</option>
+              <option value="personal">事假 (不給薪)</option>
+              <option value="sick">病假 (半薪)</option>
+              <option value="comp">補休池抵銷</option>
+            </select>
+          </div>
+          <div id="leave-notice-box" class="bg-amber-50 p-2.5 rounded-xl text-[11px] text-amber-900 border border-amber-200">
+            💡 勞基法白話提醒：特休為全薪假，未休完可依法換算工資。目前剩餘 48 小時。
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <div><label class="block text-[10px] text-gray-500">日期</label><input type="date" class="w-full border rounded p-1.5 text-xs"></div>
+            <div><label class="block text-[10px] text-gray-500">時數</label><input type="number" placeholder="例：4" class="w-full border rounded p-1.5 text-xs"></div>
+          </div>
+          <button type="button" class="w-full bg-amber-600 text-white font-bold py-2 rounded-xl text-xs">送出請假單</button>
+        </form>
+
+        <!-- 調班單 -->
+        <form id="subtab-content-swap" class="bg-white p-4 rounded-2xl shadow-sm border space-y-3 hidden">
+          <h3 class="font-bold text-xs text-gray-800 border-b pb-1.5">彈性調班申請</h3>
+          <div class="bg-gray-50 p-2.5 rounded-xl space-y-2 border">
+            <span class="text-[11px] font-bold text-gray-700">【原班表】</span>
+            <div class="grid grid-cols-2 gap-2">
+              <input type="date" class="border rounded p-1 text-xs">
+              <input type="text" placeholder="原狀態/時段" class="border rounded p-1 text-xs">
+            </div>
+          </div>
+          <div class="bg-amber-50 p-2.5 rounded-xl space-y-2 border border-amber-200">
+            <span class="text-[11px] font-bold text-amber-800">【調整後班表】</span>
+            <div class="grid grid-cols-2 gap-2">
+              <input type="date" class="border rounded p-1 text-xs">
+              <input type="text" placeholder="調整後狀態" class="border rounded p-1 text-xs">
+            </div>
+          </div>
+          <button type="button" class="w-full bg-amber-600 text-white font-bold py-2 rounded-xl text-xs">送出調班申請</button>
+        </form>
+      </section>
+
+      <!-- ================= 頁面 3: 未來特殊活動 (Future Events) ================= -->
+      <section id="page-work-plan" class="page-content hidden space-y-4">
+        
+        <!-- 月份篩選器 (預設下個月) -->
+        <div class="bg-white p-3 rounded-2xl shadow-sm border flex justify-between items-center">
+          <span class="font-bold text-xs text-gray-700"><i class="fa-solid fa-filter text-amber-600 mr-1"></i> 活動月份篩選</span>
+          <select id="event-month-select" onchange="renderEventsByMonth()" class="border border-amber-300 rounded-lg px-2 py-1 text-xs font-bold bg-amber-50 text-amber-900 outline-none">
+            <option value="10" selected>2026 年 10 月 (下個月)</option>
+            <option value="11">2026 年 11 月</option>
+            <option value="12">2026 年 12 月</option>
+          </select>
+        </div>
+
+        <!-- 未來活動清單卡片 (點擊跳 Popup Modal) -->
+        <div class="space-y-2" id="event-list-container">
+          <!-- 10月活動 (預設顯示) -->
+          <div onclick="openEventModal('青銀共融展演營隊', '2026/10/05 (一)', '08:00 - 17:00', '壽豐鄉原民文化館', '阿犁 (主要負責人)', '小明, 美玲')" class="p-3 bg-white rounded-2xl border border-amber-200 hover:border-amber-400 cursor-pointer shadow-sm flex justify-between items-center">
+            <div>
+              <div class="flex items-center gap-1.5">
+                <span class="text-[9px] bg-amber-100 text-amber-800 font-bold px-1.5 py-0.5 rounded">10/05</span>
+                <h4 class="font-bold text-xs text-gray-800">青銀共融展演營隊</h4>
+              </div>
+              <p class="text-[10px] text-gray-500 mt-1"><i class="fa-solid fa-location-dot"></i> 壽豐鄉原民文化館 | 夥伴：小明, 美玲</p>
+            </div>
+            <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
+          </div>
+
+          <div onclick="openEventModal('社區黑金文化導覽外勤', '2026/10/18 (日)', '09:00 - 15:00', '豐山村社區導覽路線', '美玲', '阿犁 (Tag你同行)')" class="p-3 bg-white rounded-2xl border border-blue-200 hover:border-blue-400 cursor-pointer shadow-sm flex justify-between items-center">
+            <div>
+              <div class="flex items-center gap-1.5">
+                <span class="text-[9px] bg-blue-100 text-blue-800 font-bold px-1.5 py-0.5 rounded">10/18</span>
+                <h4 class="font-bold text-xs text-gray-800">社區黑金文化導覽外勤</h4>
+              </div>
+              <p class="text-[10px] text-gray-500 mt-1"><i class="fa-solid fa-location-dot"></i> 豐山村導覽路線 | 夥伴 Tag 你</p>
+            </div>
+            <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
+          </div>
+        </div>
+
+        <!-- 登記新增特殊活動表單 -->
+        <form class="bg-white p-4 rounded-2xl shadow-sm border space-y-3">
+          <h3 class="font-bold text-xs text-gray-800 border-b pb-1.5">預報未來特殊活動</h3>
+          <input type="text" placeholder="活動名稱" class="w-full border rounded p-1.5 text-xs">
+          <div class="grid grid-cols-2 gap-2">
+            <input type="date" class="border rounded p-1.5 text-xs">
+            <input type="text" placeholder="時間段 (如 08:00-16:00)" class="border rounded p-1.5 text-xs">
+          </div>
+          <input type="text" placeholder="活動地點" class="w-full border rounded p-1.5 text-xs">
+          <input type="text" placeholder="一同進行的夥伴 (Tag 同事姓名)" class="w-full border rounded p-1.5 text-xs">
+          <button type="button" class="w-full bg-amber-600 text-white font-bold py-2 rounded-xl text-xs">提交給人事預排大班表</button>
+        </form>
+      </section>
+
+      <!-- ================= 頁面 4: 個人資料 (Profile & Payroll) ================= -->
+      <section id="page-profile" class="page-content hidden space-y-4">
+        
+        <!-- 個人基本資料 -->
+        <div class="bg-white rounded-2xl p-4 shadow-sm border text-center space-y-1">
+          <div class="w-12 h-12 bg-amber-200 text-amber-800 rounded-full flex items-center justify-center font-bold text-base mx-auto">阿</div>
+          <h3 class="font-bold text-sm text-gray-800">阿犁 (陳小牛)</h3>
+          <p class="text-[10px] text-gray-400">入職時間：2022/03/01 (資歷 4 年)</p>
+        </div>
+
+        <!-- 核心亮點：個人歷月薪水與差勤最終結算 -->
+        <div class="bg-white rounded-2xl p-4 shadow-sm border border-amber-200 space-y-3">
+          <div class="flex justify-between items-center border-b pb-2">
+            <span class="font-bold text-xs text-amber-900 flex items-center gap-1">
+              <i class="fa-solid fa-file-invoice-dollar text-amber-600"></i> 歷月出勤與薪資結算
+            </span>
+            <!-- 下拉選擇歷月 -->
+            <select id="payroll-month-select" onchange="renderPayrollSummary()" class="text-[10px] border rounded px-1.5 py-0.5 bg-amber-50 text-amber-900 font-bold border-amber-300">
+              <option value="2026-08">上期 (08/20 - 09/19)</option>
+              <option value="2026-07">歷史 (07/20 - 08/19)</option>
+            </select>
+          </div>
+
+          <!-- 最終結算總覽卡片 -->
+          <div class="bg-amber-50/70 p-3 rounded-xl border border-amber-200/80 space-y-2" id="payroll-summary-card">
+            <div class="flex justify-between items-end">
+              <div>
+                <span class="text-[10px] text-gray-500 block">本月最終結算工時/天數</span>
+                <span class="text-lg font-extrabold text-amber-900">21 天 0 小時 0 分</span>
+              </div>
+              <span class="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full">薪資全額核發</span>
+            </div>
+
+            <!-- 細節明細拆解 -->
+            <div class="pt-2 border-t border-amber-200/60 space-y-1.5 text-[11px] text-gray-700">
+              <div class="flex justify-between">
+                <span>原本應出勤工時：</span>
+                <span class="font-bold">21 天 (168 小時)</span>
+              </div>
+              <div class="flex justify-between">
+                <span>實際打卡出勤：</span>
+                <span class="font-bold">20 天 7 小時 45 分</span>
+              </div>
+              <div class="flex justify-between text-rose-700">
+                <span>遲到紀錄扣抵：</span>
+                <span>遲到 1 次 (15 分鐘)</span>
+              </div>
+              <div class="flex justify-between text-emerald-700">
+                <span>使用補休折抵：</span>
+                <span class="font-bold">- 15 分鐘 (抵銷遲到)</span>
+              </div>
+              <div class="flex justify-between text-blue-700">
+                <span>請假核算 (特休/事假)：</span>
+                <span>請特休 0.5 天 (4 小時)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 個人補休池 (Hours Bank) -->
+        <div class="bg-gradient-to-r from-amber-600 to-amber-700 text-white rounded-2xl p-4 shadow-sm space-y-2">
+          <div class="flex justify-between items-center text-xs">
+            <span class="font-bold"><i class="fa-solid fa-piggy-bank"></i> 個人補休池 (Hours Bank)</span>
+            <span class="text-[10px] bg-amber-800/60 px-2 py-0.5 rounded">可用累計</span>
+          </div>
+          <div class="text-2xl font-black">12.5 <span class="text-xs font-normal">小時</span></div>
+        </div>
+
+      </section>
+
+    </main>
+
+    <!-- 底部固定導覽列 -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-40">
+      <div class="max-w-md mx-auto flex justify-around py-2">
+        <button onclick="switchTab('home')" id="nav-home" class="nav-btn flex flex-col items-center text-amber-600 font-bold">
+          <i class="fa-solid fa-house text-sm"></i><span class="text-[10px] mt-0.5">首頁</span>
+        </button>
+        <button onclick="switchTab('leave-swap')" id="nav-leave-swap" class="nav-btn flex flex-col items-center text-gray-400">
+          <i class="fa-solid fa-calendar-minus text-sm"></i><span class="text-[10px] mt-0.5">調班/請假</span>
+        </button>
+        <button onclick="switchTab('work-plan')" id="nav-work-plan" class="nav-btn flex flex-col items-center text-gray-400">
+          <i class="fa-solid fa-calendar-plus text-sm"></i><span class="text-[10px] mt-0.5">未來活動</span>
+        </button>
+        <button onclick="switchTab('profile')" id="nav-profile" class="nav-btn flex flex-col items-center text-gray-400">
+          <i class="fa-solid fa-user text-sm"></i><span class="text-[10px] mt-0.5">個人資料</span>
+        </button>
+      </div>
+    </nav>
+  </div>
+
+  <!-- ================= 人事管理後台視窗 (Admin Portal View) ================= -->
+  <div id="view-admin" class="hidden max-w-2xl mx-auto p-4 space-y-5">
+    
+    <!-- 後台頂部警告與說明 -->
+    <div class="bg-slate-800 text-white p-4 rounded-2xl shadow-md flex justify-between items-center">
+      <div>
+        <h2 class="font-bold text-sm"><i class="fa-solid fa-user-shield text-amber-400 mr-1"></i> 牛犁協會 - 人事管理後台</h2>
+        <p class="text-[10px] text-slate-300">可全盤檢視成員歷年差勤、進行下月預排與審核</p>
+      </div>
+      <button onclick="toggleAdminMode()" class="text-xs bg-slate-700 hover:bg-slate-600 px-2.5 py-1 rounded text-slate-200">返回員工端</button>
+    </div>
+
+    <!-- 功能 1: 全體成員歷年差勤與出勤總表 -->
+    <div class="bg-white p-4 rounded-2xl shadow-sm border space-y-3">
+      <div class="flex justify-between items-center border-b pb-2">
+        <h3 class="font-bold text-xs text-gray-800"><i class="fa-solid fa-users-viewfinder text-amber-600 mr-1"></i> 全員歷年差勤紀錄查詢</h3>
+        <input type="text" placeholder="搜尋同仁姓名..." class="border rounded px-2 py-0.5 text-xs">
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs border-collapse">
+          <thead>
+            <tr class="bg-gray-100 text-gray-600 text-[10px]">
+              <th class="p-2">姓名</th>
+              <th class="p-2">當期工時結算</th>
+              <th class="p-2">遲到次數/時數</th>
+              <th class="p-2">補休池剩餘</th>
+              <th class="p-2">操作</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y text-[11px]">
+            <tr>
+              <td class="p-2 font-bold">阿犁</td>
+              <td class="p-2 text-emerald-600 font-bold">21天 0時 0分 (滿)</td>
+              <td class="p-2 text-rose-600">1 次 (15m)</td>
+              <td class="p-2">12.5 小時</td>
+              <td class="p-2"><button onclick="alert('載入阿犁歷年明細')" class="text-amber-700 font-bold underline">歷年總表</button></td>
+            </tr>
+            <tr>
+              <td class="p-2 font-bold">小明</td>
+              <td class="p-2 text-amber-700 font-bold">20天 4時 (請假4h)</td>
+              <td class="p-2 text-gray-400">0 次</td>
+              <td class="p-2">8.0 小時</td>
+              <td class="p-2"><button onclick="alert('載入小明歷年明細')" class="text-amber-700 font-bold underline">歷年總表</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 功能 2: 下月大班表預排看板 (自動匯入未來活動) -->
+    <div class="bg-white p-4 rounded-2xl shadow-sm border space-y-3">
+      <div class="flex justify-between items-center border-b pb-2">
+        <div>
+          <h3 class="font-bold text-xs text-gray-800"><i class="fa-solid fa-calendar-check text-amber-600 mr-1"></i> 10月大班表預排視覺化看板</h3>
+          <p class="text-[9px] text-gray-400">已自動整合 2 筆同仁預報之未來特殊活動</p>
+        </div>
+        <button onclick="alert('班表已成功發布給全體同仁！')" class="bg-amber-600 text-white text-xs px-3 py-1.5 rounded-xl font-bold shadow">一鍵發布下月班表</button>
+      </div>
+
+      <div class="bg-slate-50 p-3 rounded-xl border text-xs space-y-2">
+        <div class="font-bold text-gray-700">【10/05 (一) 預排狀態】</div>
+        <div class="flex items-center justify-between text-[11px] bg-white p-2 rounded border">
+          <span>阿犁、小明、美玲：青銀共融營隊 (外勤)</span>
+          <span class="text-amber-700 font-bold">已預排外勤班</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= POPUP 彈出視窗 (Modals) ================= -->
+
+  <!-- Modal 1: 班表單日詳情 -->
+  <div id="modal-day-detail" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white w-full max-w-xs rounded-2xl p-4 shadow-xl space-y-3">
+      <div class="flex justify-between items-center border-b pb-2">
+        <h4 id="modal-date-title" class="font-bold text-xs text-gray-800">日期名稱</h4>
+        <button onclick="closeModal('modal-day-detail')"><i class="fa-solid fa-xmark text-gray-400"></i></button>
+      </div>
+      <div class="space-y-1.5 text-xs">
+        <p>狀態：<span id="modal-status" class="font-bold text-amber-700">--</span></p>
+        <p>時段：<span id="modal-time" class="font-bold">--</span></p>
+        <p>地點：<span id="modal-location" class="font-bold">--</span></p>
+      </div>
+      <button onclick="closeModal('modal-day-detail')" class="w-full bg-gray-100 font-bold py-1.5 rounded-xl text-xs">關閉</button>
+    </div>
+  </div>
+
+  <!-- Modal 2: 未來活動 Popup 詳情 -->
+  <div id="modal-event-detail" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white w-full max-w-xs rounded-2xl p-4 shadow-xl space-y-3">
+      <div class="flex justify-between items-center border-b pb-2">
+        <h4 id="event-modal-title" class="font-bold text-xs text-amber-900">活動名稱</h4>
+        <button onclick="closeModal('modal-event-detail')"><i class="fa-solid fa-xmark text-gray-400"></i></button>
+      </div>
+      <div class="space-y-2 text-xs">
+        <p><i class="fa-regular fa-calendar text-amber-600 mr-1"></i> 日期：<span id="event-modal-date" class="font-bold"></span></p>
+        <p><i class="fa-regular fa-clock text-amber-600 mr-1"></i> 時間：<span id="event-modal-time" class="font-bold"></span></p>
+        <p><i class="fa-solid fa-location-dot text-amber-600 mr-1"></i> 地點：<span id="event-modal-loc" class="font-bold"></span></p>
+        <p><i class="fa-solid fa-user-tag text-amber-600 mr-1"></i> 主辦發起：<span id="event-modal-owner" class="font-bold"></span></p>
+        <p><i class="fa-solid fa-users text-amber-600 mr-1"></i> 同行夥伴：<span id="event-modal-partners" class="font-bold text-amber-800"></span></p>
+      </div>
+      <button onclick="alert('已加入您的個人預排關注清單！'); closeModal('modal-event-detail');" class="w-full bg-amber-600 text-white font-bold py-2 rounded-xl text-xs">同步關注此行程</button>
+    </div>
+  </div>
+
+  <!-- Modal 3: 打卡例外說明 -->
+  <div id="modal-out-range" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white w-full max-w-xs rounded-2xl p-4 shadow-xl space-y-3">
+      <h4 class="font-bold text-xs text-center text-gray-800">偏離辦公室打卡原因</h4>
+      <textarea placeholder="填寫外勤原因..." class="w-full border rounded p-2 text-xs" rows="2"></textarea>
+      <button onclick="closeModal('modal-out-range'); alert('外勤打卡成功！');" class="w-full bg-amber-600 text-white font-bold py-1.5 rounded-xl text-xs">送出</button>
+    </div>
+  </div>
+
+  <!-- Modal 4: 遲到明細 Modal -->
+  <div id="modal-late-detail" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white w-full max-w-xs rounded-2xl p-4 shadow-xl space-y-3">
+      <div class="flex justify-between items-center border-b pb-2">
+        <h4 class="font-bold text-xs text-gray-800">本期遲到明細 (08/20-09/19)</h4>
+        <button onclick="closeModal('modal-late-detail')"><i class="fa-solid fa-xmark text-gray-400"></i></button>
+      </div>
+      <div class="p-2 bg-rose-50 rounded-xl text-xs flex justify-between items-center border border-rose-100">
+        <div>
+          <div class="font-bold text-rose-900">2026/09/16 (三)</div>
+          <div class="text-[10px] text-rose-600">刷卡 08:15 (遲到 15m)</div>
+        </div>
+        <span class="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-1.5 py-0.5 rounded">已用補休抵銷</span>
+      </div>
+      <button onclick="closeModal('modal-late-detail')" class="w-full bg-gray-100 font-bold py-1.5 rounded-xl text-xs">關閉</button>
+    </div>
+  </div>
+
+  <!-- 前端邏輯控制 JS -->
+  <script>
+    let isAdmin = false;
+
+    // 後台切換模式
+    function toggleAdminMode() {
+      isAdmin = !isAdmin;
+      const staffView = document.getElementById('view-staff');
+      const adminView = document.getElementById('view-admin');
+      const toggleBtn = document.getElementById('admin-toggle-btn');
+      const subtitle = document.getElementById('header-subtitle');
+
+      if (isAdmin) {
+        staffView.classList.add('hidden');
+        adminView.classList.remove('hidden');
+        toggleBtn.innerHTML = '<i class="fa-solid fa-arrow-left"></i> 切換員工端';
+        subtitle.innerText = "人事管理後台模式";
+      } else {
+        adminView.classList.add('hidden');
+        staffView.classList.remove('hidden');
+        toggleBtn.innerHTML = '<i class="fa-solid fa-user-gear"></i> 切換人事後台';
+        subtitle.innerText = "員工端模式 | 壽豐辦公室";
+      }
+    }
+
+    // 主頁籤切換
+    function switchTab(tabId) {
+      document.querySelectorAll('.page-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.nav-btn').forEach(el => {
+        el.classList.remove('text-amber-600', 'font-bold');
+        el.classList.add('text-gray-400');
+      });
+
+      document.getElementById('page-' + tabId).classList.remove('hidden');
+      const activeNav = document.getElementById('nav-' + tabId);
+      if(activeNav) {
+        activeNav.classList.add('text-amber-600', 'font-bold');
+        activeNav.classList.remove('text-gray-400');
+      }
+      window.scrollTo(0, 0);
+    }
+
+    // 切換首頁班表檢視模式 (滑動卡片 vs 網格全月)
+    function toggleCalendarView() {
+      const slideView = document.getElementById('cal-view-slide');
+      const gridView = document.getElementById('cal-view-grid');
+      const btn = document.getElementById('btn-toggle-cal-view');
+
+      if (gridView.classList.contains('hidden')) {
+        gridView.classList.remove('hidden');
+        slideView.classList.add('hidden');
+        btn.innerText = "切換滑動卡片";
+      } else {
+        gridView.classList.add('hidden');
+        slideView.classList.remove('hidden');
+        btn.innerText = "切換網格月曆";
+      }
+    }
+
+    // 未來活動點擊彈出 Modal 詳情
+    function openEventModal(title, date, time, loc, owner, partners) {
+      document.getElementById('event-modal-title').innerText = title;
+      document.getElementById('event-modal-date').innerText = date;
+      document.getElementById('event-modal-time').innerText = time;
+      document.getElementById('event-modal-loc').innerText = loc;
+      document.getElementById('event-modal-owner').innerText = owner;
+      document.getElementById('event-modal-partners').innerText = partners;
+      openModal('modal-event-detail');
+    }
+
+    // 通用 Modal 控制
+    function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+    function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+    function openDayDetail(date, status, time, loc) {
+      document.getElementById('modal-date-title').innerText = date;
+      document.getElementById('modal-status').innerText = status;
+      document.getElementById('modal-time').innerText = time;
+      document.getElementById('modal-location').innerText = loc;
+      openModal('modal-day-detail');
+    }
+
+    function switchSubTab(type) {
+      const leaveBtn = document.getElementById('subtab-btn-leave');
+      const swapBtn = document.getElementById('subtab-btn-swap');
+      const leaveForm = document.getElementById('subtab-content-leave');
+      const swapForm = document.getElementById('subtab-content-swap');
+
+      if (type === 'leave') {
+        leaveBtn.className = "flex-1 py-1.5 rounded-lg bg-white shadow text-amber-800";
+        swapBtn.className = "flex-1 py-1.5 rounded-lg text-gray-600";
+        leaveForm.classList.remove('hidden');
+        swapForm.classList.add('hidden');
+      } else {
+        swapBtn.className = "flex-1 py-1.5 rounded-lg bg-white shadow text-amber-800";
+        leaveBtn.className = "flex-1 py-1.5 rounded-lg text-gray-600";
+        swapForm.classList.remove('hidden');
+        leaveForm.classList.add('hidden');
+      }
+    }
+
+    function updateLeaveNotice() {
+      const select = document.getElementById('leave-type-select').value;
+      const box = document.getElementById('leave-notice-box');
+      if (select === 'annual') box.innerText = "💡 勞基法白話提醒：特休為全薪假，未休完可依法換算工資。目前剩餘 48 小時。";
+      else if (select === 'personal') box.innerText = "💡 勞基法白話提醒：一年最多 14 天事假，請假期間不發給薪水（扣全薪）。";
+      else if (select === 'sick') box.innerText = "💡 勞基法白話提醒：一年 30 天內病假發給半薪。超過 2 天請附診斷證明。";
+      else if (select === 'comp') box.innerText = "💡 系統提示：優先從個人補休池（剩餘 12.5 小時）抵銷。";
+    }
+  </script>
+</body>
+</html>
